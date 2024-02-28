@@ -36,11 +36,10 @@ df1<-df1%>%
 
 see how much data I have per species
 
-blabla
 
 ```{r}
 species=c("CC","CN","SP","TP","PS","PL","LM","SD","HM","LV")
-select_species=c("CN","SP","TP","PS","PL","LM","LV")
+select_species=c("CN","SP","TP","PS","PL","LM","LV") # with enough counts
 
 #df_TP<-df1[df1$species=="TP",]
 counts<-c()
@@ -53,30 +52,12 @@ count_data<-data.frame(species,counts)
 
 
 
-ggplot(data=count_data,aes(x=species,y=counts)) +geom_bar(stat="identity")
+ggplot(data=count_data,aes(x=species,y=counts)) +geom_bar(stat="identity") + ggtitle("timothee data")
 
 
 ```
-For now, we focus on TP
 simple boxplot: effect of treatments on seeds
-```{r}
 
-df_TP<-df1[df1$species=="TP",]
-
-
-df_TP<-data.frame(df_TP,condi=paste(df_TP$site,df_TP$plotID,sep=" "))
-
-plot_TP_snb<- ggplot(df_TP, aes(x=condi, y=seeds_number.inf))+geom_boxplot() + geom_dotplot(binaxis = 'y',
-        dotsize = 1,
-        stackdir = 'center') +
-    theme_classic()+ggtitle("seed number per infructescence") +
-  geom_signif(comparisons = list(c("group_1", "group_2")), 
-          map_signif_level=TRUE)
-plot_TP_snb
-
-
-
-```
 for each species, seed number
 ```{r}
 
@@ -196,7 +177,6 @@ df5_TP<-df5_TP %>%
 
 ## test of normality
 ```{r}
-hist(weight.inf)
 plot_sw<- ggplot(df5, aes(x= weight.inf))+geom_histogram(aes(fill=student))+
     theme_classic() + facet_wrap(vars(species),nrow=2,scales='free')+ggtitle("seed weight per infructescence")
   
@@ -211,7 +191,7 @@ hist_wpi
 
 
 ```{r}
-shapiro.test(df5[df5$species=="CN",]$weight.inf)
+shapiro.test(df5[df5$species=="PL",]$weight.inf)
 ```
 at least, some are not normal (eg : there are bimodal distribution with viable and not viable seeds)
 ```{r}
@@ -244,17 +224,7 @@ print("weight per seed")
 U_wps
 ```
 
-
-```{r}
-
-
-```
-
-
 (what we could have done for anova, looking for interactions with condi.)
-
-
-
 ```{r}
 var=c(8,9,10)
 
@@ -283,19 +253,12 @@ print(anov_wps)
 
 ```
 
-#```{r}
-df5_TP$flowers <- df5_TP$flowers %>% replace(.== "NULL", NA)
-df5_TP <- df5_TP[, ! names(df5_TP) %in% "flowers", drop = F]
-df5_TP <-rbind(df5_TP,test)
-```
-
-
-#```{r}
+#
 df5_TP <- df5_TP %>% 
   mutate(
     flowers = replace(flowers, "NULL", NA)
   )
-```df %>% 
+df %>% 
   drop_na(var2)
 
 res.aov <- jobsatisfaction %>% anova_test(score ~ gender * education_level)
