@@ -9,22 +9,53 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r}
+library(ade4)
+library(ggplot2)
+library(tidyverse)
+library(googlesheets4)
+library(dplyr)
+library(rstatix)
+library(readxl)
 ```
 
-## Including Plots
+```{r}
+df<-read_sheet('https://docs.google.com/spreadsheets/d/1EC8b0MkNI7F2d2fFpy_64ZuBGXhM180vjE66Cq11lJQ/edit#gid=0')
+df<-as.data.frame(df)
+df1<- data.frame(df,student='Timothée')
 
-You can also embed plots, for example:
+dff<-read_sheet('https://docs.google.com/spreadsheets/d/1PyHHmGMpWnRUsCRoC8_AoNDIC8ap8zlRJ8HwA1HqLEQ/edit#gid=447429113',na = c("","NA","NULL",NULL))
+dff<-as.data.frame(dff)
+df2<- dff
+df2<-data.frame(df2,student='Ingrid')
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+df3<-df1%>% select(1,2,3,4,5,6,7,8,9,10,11,12,13,"student")
+df4<-df2%>% select(1,2,3,4,5,6,7,8,9,10,11,12,13,"student")
+df5<- rbind(df3,df4)
+df5<-data.frame(df5,condi=paste(df5$site,df5$plotID,sep=" "))
+
+```
+```{r}
+demo_trait_high<-read_excel(path="C:/Users/timot/Documents/M1/stage/data_analysis/RangeX_project_timothee/data/RangeX_raw_demographic_traits_high_2023.xlsx",sheet=2)
+demo_trait_low<-read_excel(path="C:/Users/timot/Documents/M1/stage/data_analysis/RangeX_project_timothee/data/RangeX_raw_demographic_traits_low_2023.xlsx",sheet=2)
+func_trait<-read_excel(path="C:/Users/timot/Documents/M1/stage/data_analysis/RangeX_project_timothee/data/RangeX_raw_functional_traits_2023.xlsx",sheet=2)
+demo_trait<-rbind(demo_trait_low,demo_trait_high)
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+
+
+
+
+
+```{r}
+#remotes::install_github("Between-the-Fjords/dataDownloader")
+#get_file(
+         file = "RangeX_raw_demographic_traits_high_2023.xlsx",
+         path = "C:/Users/timot/Documents/M1/stage/data_analysis/RangeX_project_timothee",
+         remote_path = "Range_X_timothee/demographic and functional trait")
+```
+

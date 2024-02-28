@@ -94,6 +94,10 @@ df3<-df1%>% select(1,2,3,4,5,6,7,8,9,10,11,12,13,"student")
 df4<-df2%>% select(1,2,3,4,5,6,7,8,9,10,11,12,13,"student")
 df5<- rbind(df3,df4)
 df5<-data.frame(df5,condi=paste(df5$site,df5$plotID,sep=" "))
+df5<-df5 %>%
+  filter(!is.na(flowers))
+df5<-df5%>%
+  filter(!is.na(weight.inf))
 
 
 ```
@@ -152,17 +156,25 @@ plot_sw<- ggplot(df5, aes(x= weight.inf))+geom_histogram(aes(fill=student))+
 
 ## test of normality
 ```{r}
-hist_wpi<- ggplot(df5, aes(x= weight.inf))+geom_histogram(aes(fill=student))+
+hist_wpi<- ggplot(df5, aes(x=weight.inf))+geom_histogram(aes(fill=student))+
     theme_classic() + facet_wrap(vars(species),nrow=2,scales='free')+ggtitle("seed weight per infructescence")
 hist_wpi
 ```
 
 
 ```{r}
-shapiro.test(df5[df5$species=="PL",]$weight.inf)
+shapiro.test(df5$weight.seed)
+shapiro.test(log(df5$weight.seed+1))
+
+shapiro.test(df5$seeds_number.inf)
+
+shapiro.test(log(df5[df5$species=="TP",]$weight.inf+1))
+shapiro.test(df5[df5$species=="TP",]$weight.inf)
+
+
 ```
 at least, some are not normal (eg : there are bimodal distribution with viable and not viable seeds)
-
+#test  effect of the experimentator
 ```{r}
 U_sn<-c()
 U_wpi<-c()
@@ -189,6 +201,33 @@ U_wpi
 print("weight per seed")
 U_wps
 ```
+## pool all the species together, as part of a community.
+
+```{r}
+plot_t_sn<- ggplot(df5, aes(x=condi, y=seeds_number.inf ))+geom_boxplot(aes(fill=student)) + geom_dotplot(binaxis = 'y',
+        dotsize = 0.01,
+        stackdir = 'center') +theme_classic() 
+    
+plot_t_sn
+```
+
+```{r}
+plot_t_sw<- ggplot(df5, aes(x=condi, y=log(weight.inf) ))+geom_boxplot(aes(fill=student)) + geom_dotplot(binaxis = 'y',
+        dotsize = 0.01,
+        stackdir = 'center') +theme_classic() 
+    
+plot_t_sw
+```
+
+```{r}
+plot_t_wpi<- ggplot(df5, aes(x=condi, y=log(weight.seed) ))+geom_boxplot(aes(fill=student)) + geom_dotplot(binaxis = 'y',
+        dotsize = 0.01,
+        stackdir = 'center') +theme_classic() 
+    
+plot_t_wpi
+```
+
+
 
 (what we could have done for anova, looking for interactions with condi.)
 ```{r}
@@ -219,7 +258,16 @@ print(anov_wps)
 
 ```
 
-#
+```{r}
+
+#prendre le log.
+effet_etude<-lm(weight.inf~student,df5)
+shapiro.test(effet_etude$residuals)
+```
+#Community Weighted Mean CWM
+library(FD)
+shapiro.test(effet.etud$residuals)
+
 df5_TP <- df5_TP %>% 
   mutate(
     flowers = replace(flowers, "NULL", NA)
