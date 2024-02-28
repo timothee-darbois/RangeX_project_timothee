@@ -1,0 +1,330 @@
+---
+title: "RangeX project"
+author: "Timothée Darbois"
+date: "2024-02-26"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(ade4)
+library(ggplot2)
+library(tidyverse)
+library(googlesheets4)
+library(dplyr)
+library(rstatix)
+```
+
+```{r}
+df<-read_sheet('https://docs.google.com/spreadsheets/d/1EC8b0MkNI7F2d2fFpy_64ZuBGXhM180vjE66Cq11lJQ/edit#gid=0')
+df<-as.data.frame(df)
+df1<- data.frame(df,student='Timothée')
+
+```
+
+data cleaning
+```{r}
+df1<-df1 %>%
+  filter(!is.na(flowers))
+df1<-df1%>%
+  filter(!is.na(weight.inf))
+```
+
+see how much data I have per species
+
+blabla
+
+```{r}
+species=c("CC","CN","SP","TP","PS","PL","LM","SD","HM","LV")
+select_species=c("CN","SP","TP","PS","PL","LM","LV")
+
+#df_TP<-df1[df1$species=="TP",]
+counts<-c()
+for (i in species){
+  print(i)
+  counts<-c(counts,nrow(df1[df1$species==i,]))
+
+}
+count_data<-data.frame(species,counts)
+
+
+
+ggplot(data=count_data,aes(x=species,y=counts)) +geom_bar(stat="identity")
+
+
+```
+For now, we focus on TP
+simple boxplot: effect of treatments on seeds
+```{r}
+
+df_TP<-df1[df1$species=="TP",]
+
+
+df_TP<-data.frame(df_TP,condi=paste(df_TP$site,df_TP$plotID,sep=" "))
+
+plot_TP_snb<- ggplot(df_TP, aes(x=condi, y=seeds_number.inf))+geom_boxplot() + geom_dotplot(binaxis = 'y',
+        dotsize = 1,
+        stackdir = 'center') +
+    theme_classic()+ggtitle("seed number per infructescence") +
+  geom_signif(comparisons = list(c("group_1", "group_2")), 
+          map_signif_level=TRUE)
+plot_TP_snb
+
+
+
+```
+for each species, seed number
+```{r}
+
+df1<-data.frame(df1,condi=paste(df1$site,df1$plotID,sep=" "))
+
+plot_snb<- ggplot(df1, aes(x=condi, y=seeds_number.inf))+geom_boxplot() + geom_dotplot(binaxis = 'y',
+        dotsize = 1,
+        stackdir = 'center') +
+    theme_classic() + facet_wrap(vars(species),nrow=2,scales='free')+ggtitle("seed number per infructescence")
+  
+
+plot_snb
+```
+for each species, seed weight
+```{r}
+
+plot_sw<- ggplot(df1, aes(x=condi, y=weight.inf))+geom_boxplot() + geom_dotplot(binaxis = 'y',
+        dotsize = 1,
+        stackdir = 'center') +
+    theme_classic() + facet_wrap(vars(species),nrow=2,scales='free')+ggtitle("seed weight per infructescence")
+  
+
+plot_sw
+```
+
+for each species, weight per seeds
+```{r}
+plot_wps<- ggplot(df1, aes(x=condi, y=weight.seed))+geom_boxplot() + geom_dotplot(binaxis = 'y',
+        dotsize = 1,
+        stackdir = 'center') +
+    theme_classic() + facet_wrap(vars(species),nrow=2,scales='free')+ggtitle("seed weight per seed")
+  
+
+plot_wps
+```
+## import of ingrid's data
+```{r}
+dff<-read_sheet('https://docs.google.com/spreadsheets/d/1PyHHmGMpWnRUsCRoC8_AoNDIC8ap8zlRJ8HwA1HqLEQ/edit#gid=447429113',na = c("","NA","NULL",NULL))
+dff<-as.data.frame(dff)
+df2<- dff
+df2<-data.frame(df2,student='Ingrid')
+```
+```{r}
+df2<-df2 %>%
+  filter(!is.na(flowers))
+df2<-df2%>%
+  filter(!is.na(weight.inf))
+
+species=c("CC","CN","SP","TP","PS","PL","LM","SD","HM","LV")
+#df_TP<-df1[df1$species=="TP",]
+counts<-c()
+for (i in species){
+  print(i)
+  counts<-c(counts,nrow(df2[df2$species==i,]))
+
+}
+count_data<-data.frame(species,counts)
+
+
+
+ggplot(data=count_data,aes(x=species,y=counts)) +geom_bar(stat="identity") +ggtitle('data_ingrid')
+
+```
+```{r}
+df3<-df1%>% select(1,2,3,4,7,8,9,10,11,12,13,"student")
+df4<-df2%>% select(1,2,3,4,7,8,9,10,11,12,13,"student")
+df5<- rbind(df3,df4)
+df5<-data.frame(df5,condi=paste(df5$site,df5$plotID,sep=" "))
+
+
+```
+
+
+for each species, seed number
+```{r}
+
+plot_snb<- ggplot(df5, aes(x=condi, y=seeds_number.inf))+geom_boxplot(aes(fill=student)) + geom_dotplot(binaxis = 'y',
+        dotsize = 1,
+        stackdir = 'center') +
+    theme_classic() + facet_wrap(vars(species),nrow=2,scales='free')+ggtitle("seed number per infructescence")
+  
+
+plot_snb
+```
+for each species, seed weight
+```{r}
+
+plot_sw<- ggplot(df5, aes(x=condi, y=weight.inf))+geom_boxplot(aes(fill=student)) + geom_dotplot(binaxis = 'y',
+        dotsize = 1,
+        stackdir = 'center') +
+    theme_classic() + facet_wrap(vars(species),nrow=2,scales='free')+ggtitle("seed weight per infructescence")
+  
+
+plot_sw
+```
+
+for each species, weight per seeds
+```{r}
+plot_wps<- ggplot(df5, aes(x=condi, y=weight.seed))+geom_boxplot(aes(fill=student)) + geom_dotplot(binaxis = 'y',
+        dotsize = 1,
+        stackdir = 'center') +
+    theme_classic() + facet_wrap(vars(species),nrow=2,scales='free')+ggtitle("seed weight per seed")
+  
+
+plot_wps
+```
+
+# analyse stat
+## effet expérimentateur
+```{r}
+df5_TP<-df5[df5$species=="TP",]
+df5_TP<-df5_TP %>%
+  filter(!is.na(weight.inf))
+
+
+```
+
+## test of normality
+```{r}
+hist(weight.inf)
+plot_sw<- ggplot(df5, aes(x= weight.inf))+geom_histogram(aes(fill=student))+
+    theme_classic() + facet_wrap(vars(species),nrow=2,scales='free')+ggtitle("seed weight per infructescence")
+  
+```
+
+## test of normality
+```{r}
+hist_wpi<- ggplot(df5, aes(x= weight.inf))+geom_histogram(aes(fill=student))+
+    theme_classic() + facet_wrap(vars(species),nrow=2,scales='free')+ggtitle("seed weight per infructescence")
+hist_wpi
+```
+
+
+```{r}
+shapiro.test(df5[df5$species=="CN",]$weight.inf)
+```
+at least, some are not normal (eg : there are bimodal distribution with viable and not viable seeds)
+```{r}
+wilcox.test(weight.inf~student,data=df5[df5$species=="CN",])
+```
+```{r}
+U_sn<-c()
+U_wpi<-c()
+U_wps<-c()
+
+for (i in 1:7){
+  data_U<-df5[df5$species==select_species[i],]
+  
+  U_sn<-rbind(U_sn,wilcox.test(seeds_number.inf~student,data_U))
+
+  U_wpi<-rbind(U_wpi,wilcox.test(weight.inf~student,data_U))
+
+  U_wps<-rbind(U_wps,wilcox.test(weight.seed~student,data_U))
+}
+
+U_sn<-cbind(U_sn, select_species)
+U_wpi<-cbind(U_wpi, select_species)
+U_wps<-cbind(U_wps, select_species)
+
+print("seeds number")
+U_sn
+print("weight.inf")
+U_wpi
+print("weight per seed")
+U_wps
+```
+
+
+```{r}
+
+
+```
+
+
+(what we could have done for anova, looking for interactions with condi.)
+
+
+
+```{r}
+var=c(8,9,10)
+
+anov_sn<-c()
+anov_wpi<-c()
+anov_wps<-c()
+
+for (i in 1:7){
+  test_anov<-df5[df5$species==select_species[i],]
+  
+  anov_sn<-rbind(anov_sn,anova_test(test_anov,seeds_number.inf~student*condi))
+
+  anov_wpi<-rbind(anov_wpi,anova_test(test_anov,weight.inf~student*condi))
+
+  anov_wps<-rbind(anov_wps,anova_test(test_anov,weight.seed~student*condi))
+}
+
+species_anov<-c()
+for (i in 1:7){species_anov<-c(species_anov,rep(select_species[i],3))}
+anov_sn<-data.frame(anov_sn,species=species_anov)
+anov_wpi<-data.frame(anov_wpi,species=species_anov)
+anov_wps<-data.frame(anov_wps,species=species_anov)
+print(anov_sn)
+print(anov_wpi)
+print(anov_wps)
+
+```
+
+#```{r}
+df5_TP$flowers <- df5_TP$flowers %>% replace(.== "NULL", NA)
+df5_TP <- df5_TP[, ! names(df5_TP) %in% "flowers", drop = F]
+df5_TP <-rbind(df5_TP,test)
+```
+
+
+#```{r}
+df5_TP <- df5_TP %>% 
+  mutate(
+    flowers = replace(flowers, "NULL", NA)
+  )
+```df %>% 
+  drop_na(var2)
+
+res.aov <- jobsatisfaction %>% anova_test(score ~ gender * education_level)
+res.aov
+qqq plot :
+
+qqnorm(scale(body_mass))
+abline(a=0, b=1, col = "red")
+
+
+
+ggplot(df, aes(x_var, y_var)) +
+  geom_point() +
+  facet_wrap(vars(category_var))
+
+ggplot(data_air_nona, aes(x = Month, y = Ozone))
+
+box_plot +
+    geom_boxplot() +
+    geom_dotplot(binaxis = 'y',
+        dotsize = 1,
+        stackdir = 'center') +
+    theme_classic()
+
+ggplot(data=df2, aes(x=dose, y=len, fill=supp)) +
+  geom_bar(stat="identity")
+
+
+facet grid
+
+mixed model : effet de plusieurs variables en interaction sur une variable réponse.: variable fixe et random?
+n
