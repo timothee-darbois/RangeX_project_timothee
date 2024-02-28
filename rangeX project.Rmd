@@ -32,6 +32,8 @@ df1<-df1 %>%
   filter(!is.na(flowers))
 df1<-df1%>%
   filter(!is.na(weight.inf))
+df1<-data.frame(df1,condi=paste(df1$site,df1$plotID,sep=" "))
+
 ```
 
 see how much data I have per species
@@ -58,41 +60,7 @@ ggplot(data=count_data,aes(x=species,y=counts)) +geom_bar(stat="identity") + ggt
 ```
 simple boxplot: effect of treatments on seeds
 
-for each species, seed number
-```{r}
 
-df1<-data.frame(df1,condi=paste(df1$site,df1$plotID,sep=" "))
-
-plot_snb<- ggplot(df1, aes(x=condi, y=seeds_number.inf))+geom_boxplot() + geom_dotplot(binaxis = 'y',
-        dotsize = 1,
-        stackdir = 'center') +
-    theme_classic() + facet_wrap(vars(species),nrow=2,scales='free')+ggtitle("seed number per infructescence")
-  
-
-plot_snb
-```
-for each species, seed weight
-```{r}
-
-plot_sw<- ggplot(df1, aes(x=condi, y=weight.inf))+geom_boxplot() + geom_dotplot(binaxis = 'y',
-        dotsize = 1,
-        stackdir = 'center') +
-    theme_classic() + facet_wrap(vars(species),nrow=2,scales='free')+ggtitle("seed weight per infructescence")
-  
-
-plot_sw
-```
-
-for each species, weight per seeds
-```{r}
-plot_wps<- ggplot(df1, aes(x=condi, y=weight.seed))+geom_boxplot() + geom_dotplot(binaxis = 'y',
-        dotsize = 1,
-        stackdir = 'center') +
-    theme_classic() + facet_wrap(vars(species),nrow=2,scales='free')+ggtitle("seed weight per seed")
-  
-
-plot_wps
-```
 ## import of ingrid's data
 ```{r}
 dff<-read_sheet('https://docs.google.com/spreadsheets/d/1PyHHmGMpWnRUsCRoC8_AoNDIC8ap8zlRJ8HwA1HqLEQ/edit#gid=447429113',na = c("","NA","NULL",NULL))
@@ -122,8 +90,8 @@ ggplot(data=count_data,aes(x=species,y=counts)) +geom_bar(stat="identity") +ggti
 
 ```
 ```{r}
-df3<-df1%>% select(1,2,3,4,7,8,9,10,11,12,13,"student")
-df4<-df2%>% select(1,2,3,4,7,8,9,10,11,12,13,"student")
+df3<-df1%>% select(1,2,3,4,5,6,7,8,9,10,11,12,13,"student")
+df4<-df2%>% select(1,2,3,4,5,6,7,8,9,10,11,12,13,"student")
 df5<- rbind(df3,df4)
 df5<-data.frame(df5,condi=paste(df5$site,df5$plotID,sep=" "))
 
@@ -194,9 +162,7 @@ hist_wpi
 shapiro.test(df5[df5$species=="PL",]$weight.inf)
 ```
 at least, some are not normal (eg : there are bimodal distribution with viable and not viable seeds)
-```{r}
-wilcox.test(weight.inf~student,data=df5[df5$species=="CN",])
-```
+
 ```{r}
 U_sn<-c()
 U_wpi<-c()
