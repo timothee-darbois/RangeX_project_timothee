@@ -156,8 +156,11 @@ plot_sw<- ggplot(df5, aes(x= weight.inf))+geom_histogram(aes(fill=student))+
 
 ## test of normality
 ```{r}
-hist_wpi<- ggplot(df5, aes(x=weight.inf))+geom_histogram(aes(fill=student))+
-    theme_classic() + facet_wrap(vars(species),nrow=2,scales='free')+ggtitle("seed weight per infructescence")
+hist_wpi<- ggplot(df5, aes(x=weight.inf))+
+  geom_histogram(aes(fill=student))+
+    theme_classic() + 
+  facet_wrap(vars(species),nrow=2,scales='free')+
+  ggtitle("seed weight per infructescence")
 hist_wpi
 ```
 
@@ -209,6 +212,9 @@ plot_t_sn<- ggplot(df5, aes(x=condi, y=seeds_number.inf ))+geom_boxplot(aes(fill
         stackdir = 'center') +theme_classic() 
     
 plot_t_sn
+anova_test(df5,seeds_number.inf~condi)
+anova_test(df5,seeds_number.inf~student)
+
 ```
 
 ```{r}
@@ -217,6 +223,9 @@ plot_t_sw<- ggplot(df5, aes(x=condi, y=log(weight.inf) ))+geom_boxplot(aes(fill=
         stackdir = 'center') +theme_classic() 
     
 plot_t_sw
+anova_test(df5,weight.inf~condi)
+anova_test(df5,weight.inf~student)
+
 ```
 
 ```{r}
@@ -225,6 +234,10 @@ plot_t_wpi<- ggplot(df5, aes(x=condi, y=log(weight.seed) ))+geom_boxplot(aes(fil
         stackdir = 'center') +theme_classic() 
     
 plot_t_wpi
+anova_test(df5,weight.seed~condi)
+anova_test(df5,weight.inf~student)
+
+
 ```
 
 
