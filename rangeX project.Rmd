@@ -241,11 +241,12 @@ anova_test(df5,weight.seed~condi)
 anova_test(df5,weight.inf~student)
 
 
+
 ```
 
 
 
-(what we could have done for anova, looking for interactions with condi.)
+(what we could have done for anova, looking for interactions with condi.
 ```{r}
 var=c(8,9,10)
 
