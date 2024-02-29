@@ -273,29 +273,120 @@ print(anov_wpi)
 print(anov_wps)
 
 ```
+## lm
+
+```{r}
+lm_allsp_sn <- lm(seeds_number.inf~condi, data=df5,family= "poisson")
+lm_allsp_sn
+lm_allsp_sn2 <- lm(seeds_number.inf~site, data=df5,family= "poisson")
+
+
+sjPlot::tab_model(lm_allsp_sn,show.intercept = T)
+plot_model(lm_allsp_sn, show.values = TRUE, width = 0.1, title = "effect of treatments on seeds number per infructescence") 
+```
+```{r}
+qqnorm(lm_allsp_sn$residuals,main="normal residuals qqplot seed number per inf")
+qqline(lm_allsp_sn$residuals)
+qqnorm(log(lm_allsp_sn$residuals),main="log(residuals) qqplot seed number per inf")
+qqline(log(lm_allsp_sn$residuals))
+```
 
 ## glm
+### seed number
 
 
 ```{r}
 glm_allsp_sn <- glm(seeds_number.inf~condi, data=df5,family= "poisson")
 glm_allsp_sn
 glm_allsp_sn2 <- glm(seeds_number.inf~site, data=df5,family= "poisson")
+glm_allsp_sn3 <- glm(seeds_number.inf~treat1, data=df5,family= "poisson")
+glm_allsp_sn4 <- glm(seeds_number.inf~treat2, data=df5,family= "poisson")
 
 
 sjPlot::tab_model(glm_allsp_sn,show.intercept = T)
 plot_model(glm_allsp_sn, show.values = TRUE, width = 0.1, title = "effect of treatments on seeds number per infructescence") 
+
+sjPlot::tab_model(glm_allsp_sn2,show.intercept = T)
+plot_model(glm_allsp_sn2, show.values = TRUE, width = 0.1, title = "effect of transplantation on seeds number per infructescence") 
+
+sjPlot::tab_model(glm_allsp_sn3,show.intercept = T)
+plot_model(glm_allsp_sn3, show.values = TRUE, width = 0.1, title = "effect of warming on seeds number per infructescence") 
+
+sjPlot::tab_model(glm_allsp_sn3,show.intercept = T)
+plot_model(glm_allsp_sn4, show.values = TRUE, width = 0.1, title = "effect of competition on seeds number per infructescence") 
 ```
+### weight per infructescence
+```{r}
+glm_allsp_wpi <- glm(weight.inf~condi, data=df5)
+glm_allsp_wpi
+glm_allsp_wpi2 <- glm(weight.inf~site, data=df5)
+glm_allsp_wpi3 <- glm(weight.inf~treat1, data=df5)
+glm_allsp_wpi4 <- glm(weight.inf~treat2, data=df5)
+
+
+sjPlot::tab_model(glm_allsp_wpi,show.intercept = T)
+plot_model(glm_allsp_wpi, show.values = TRUE, width = 0.1, title = "effect of treatments on seed weight per infructescence") 
+
+sjPlot::tab_model(glm_allsp_wpi2,show.intercept = T)
+plot_model(glm_allsp_wpi2, show.values = TRUE, width = 0.1, title = "effect of transplantation on seed weight per infructescence") 
+
+sjPlot::tab_model(glm_allsp_wpi3,show.intercept = T)
+plot_model(glm_allsp_wpi3, show.values = TRUE, width = 0.1, title = "effect of warming on seed weight per infructescence") 
+
+sjPlot::tab_model(glm_allsp_wpi3,show.intercept = T)
+plot_model(glm_allsp_wpi4, show.values = TRUE, width = 0.1, title = "effect of competition on seeds number per infructescence") 
+```
+
 let's focus on PL
 ```{r}
 df5_PL<- df5[df5$species== "PL",]
-glm_PL_sn <- glm(seeds_number.inf~condi, data=df5_PL,family= "poisson")
-summary(glm_PL_sn)
-glm_PL_sn2 <- glm(seeds_number.inf~site, data=df5_PL,family= "poisson")
-summary(glm_PL_sn2 )
+glm_PL_wpi <- glm(weight.inf~condi, data=df5_PL)
+summary(glm_PL_wpi)
+glm_PL_wpi2 <- glm(weight.inf~site, data=df5_PL)
+summary(glm_PL_wpi2 )
 
-sjPlot::tab_model(glm_PL_sn,show.intercept = T)
-plot_model(glm_PL_sn, show.values = TRUE, width = 0.1, title = "effect of treatments on seeds number per infructescence") 
+sjPlot::tab_model(glm_PL_wpi,show.intercept = T)
+plot_model(glm_PL_wpi, show.values = TRUE, width = 0.1, title = "effect of treatments on seeds number per infructescence") 
+```
+### weight per seed
+```{r}
+glm_allsp_wps <- glm(weight.seed~condi, data=df5)
+glm_allsp_wps
+glm_allsp_wps2 <- glm(weight.seed~site, data=df5)
+glm_allsp_wps3 <- glm(weight.seed~treat1, data=df5)
+glm_allsp_wps4 <- glm(weight.seed~treat2, data=df5)
+
+
+sjPlot::tab_model(glm_allsp_wps,show.intercept = T)
+plot_model(glm_allsp_wps, show.values = TRUE, width = 0.1, title = "effect of treatments on seed weight per seed") 
+
+sjPlot::tab_model(glm_allsp_wps2,show.intercept = T)
+plot_model(glm_allsp_wps2, show.values = TRUE, width = 0.1, title = "effect of transplantation on seed weight per seed") 
+
+sjPlot::tab_model(glm_allsp_wps3,show.intercept = T)
+plot_model(glm_allsp_wps3, show.values = TRUE, width = 0.1, title = "effect of warming on seed weight per seed") 
+
+sjPlot::tab_model(glm_allsp_wps3,show.intercept = T)
+plot_model(glm_allsp_wps4, show.values = TRUE, width = 0.1, title = "effect of competition on seed weight per seed") 
+```
+their might be a problem because my numbers are so small.
+
+QQplot
+```{r}
+
+  
+  
+qqnorm(glm_allsp_wpi$residuals,main="normal residuals qqplot seed number per inf")
+qqline(glm_allsp_wpi$residuals)
+qqnorm(log(glm_allsp_wpi$residuals),main="log(residuals) qqplot seed number per inf")
+qqline(log(glm_allsp_wpi$residuals))
+
+```
+looks not so bad. maybe we should delete some outbreakers. 
+
+```{r}
+qqnorm(log(glm_PL_wpi$residuals),main="log(residuals) qqplot PL seed number per inf")
+qqline(log(glm_PL_wpi$residuals))
 ```
 
 
