@@ -17,6 +17,9 @@ library(tidyverse)
 library(googlesheets4)
 library(dplyr)
 library(rstatix)
+
+library(sjPlot)
+library(contrast)
 ```
 
 ```{r}
@@ -271,12 +274,41 @@ print(anov_wps)
 
 ```
 
+## glm
+
+
 ```{r}
+glm_allsp_sn <- glm(seeds_number.inf~condi, data=df5,family= "poisson")
+glm_allsp_sn
+glm_allsp_sn2 <- glm(seeds_number.inf~site, data=df5,family= "poisson")
+
+
+sjPlot::tab_model(glm_allsp_sn,show.intercept = T)
+plot_model(glm_allsp_sn, show.values = TRUE, width = 0.1, title = "effect of treatments on seeds number per infructescence") 
+```
+let's focus on PL
+```{r}
+df5_PL<- df5[df5$species== "PL",]
+glm_PL_sn <- glm(seeds_number.inf~condi, data=df5_PL,family= "poisson")
+summary(glm_PL_sn)
+glm_PL_sn2 <- glm(seeds_number.inf~site, data=df5_PL,family= "poisson")
+summary(glm_PL_sn2 )
+
+sjPlot::tab_model(glm_PL_sn,show.intercept = T)
+plot_model(glm_PL_sn, show.values = TRUE, width = 0.1, title = "effect of treatments on seeds number per infructescence") 
+```
+
+
+
+glm1 <- glm(Nombre_espece~Topographie, data=tab, family = "poisson")
+
+continue with glmm
+
 
 #prendre le log.
 effet_etude<-lm(weight.inf~student,df5)
 shapiro.test(effet_etude$residuals)
-```
+
 #Community Weighted Mean CWM
 library(FD)
 shapiro.test(effet.etud$residuals)
